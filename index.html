@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Hash Checker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+   body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 90vh;
+        background: url('c.jpg') no-repeat top center fixed; /* Replace 'background.jpg' with your image path */
+        background-size: cover; /* Ensures the image covers the entire screen */
+    }
+    
+    .container {
+        background: rgba(255, 255, 255, 0.9); /* Semi-transparent background for better readability */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        text-align: center;
+        margin-left: 224px;
+    margin-top: 200px;
+    }
+    
+    h1 {
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    
+    label {
+        display: block;
+        margin: 10px 0 5px;
+    }
+    
+    input, select, button, textarea {
+        width: 97%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ad1010;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    textarea {
+        resize: none;
+        height: 100px;
+    }
+    
+    button {
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    
+    button:hover {
+        background: #0056b3;
+    }
+    
+    .result {
+        margin-top: 20px;
+    }
+    
+</style>
+
+<body>
+    <div class="container">
+        <h1>File Hash Integrity Checker</h1>
+        <form id="hash-form">
+            <label for="file-input">Select a file:</label>
+            <input type="file" id="file-input" accept="/" required>
+            
+            <label for="hash-algorithm">Hash Algorithm:</label>
+            <select id="hash-algorithm">
+                <option value="SHA-256">SHA-256</option>
+                <option value="SHA-384">SHA-384</option>
+                <option value="SHA-512">SHA-512</option>
+            </select>
+
+            <button type="button" id="calculate-hash">Calculate Hash</button>
+        </form>
+        <div class="result">
+            <p><strong>Hash Value:</strong></p>
+            <textarea id="hash-output" readonly></textarea>
+        </div>
+    </div>
+    <script >
+        document.getElementById('calculate-hash').addEventListener('click', async () => {
+            const fileInput = document.getElementById('file-input');
+            const hashAlgorithm = document.getElementById('hash-algorithm').value;
+            const hashOutput = document.getElementById('hash-output');
+        
+            if (!fileInput.files.length) {
+                alert('Please select a file first!');
+                return;
+            }
+        
+            const file = fileInput.files[0];
+        
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const hashBuffer = await crypto.subtle.digest(hashAlgorithm, arrayBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+                hashOutput.value = hashHex;
+            } catch (error) {
+                console.error('Hash calculation failed:', error);
+                alert('Failed to calculate hash. Please try again.');
+            }
+        });
+        
+    </script>
+</body>
+</html>
